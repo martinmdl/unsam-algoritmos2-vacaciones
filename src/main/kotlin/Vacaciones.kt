@@ -1,19 +1,81 @@
 import java.time.LocalDate
 
+class BusinessException(message: String) : Exception()
+
 // #### PUNTO 3 ####
 class Agencia {
-    val tours = mutableSetOf<Tours>()
-    val clientes = mutableSetOf<Personas>()
+
+    private val tours = mutableSetOf<Tour>()
+    val clientes = mutableSetOf<Persona>()
     val obsConfirmacion = mutableSetOf<ObsConfirmacion>()
+    val clientesPendientes = mutableSetOf<Persona>()
+
+    fun crearTour(fechaSalida: LocalDate, cantidadPersonas: Int, lugares: MutableList<Lugar>, costoPorPersona: Int) {
+        tours.add(Tour(
+            fechaSalida = fechaSalida,
+            cantidadPersonasRequerida = cantidadPersonas,
+            lugares = lugares,
+            costoPorPersona = costoPorPersona
+        ))
+    }
+
+    fun seleccionarTourAdecuado(persona: Persona) {
+
+        val toursDestinosAdecuados: List<Tour> = tours.filter { it.lugares.all { lugar -> persona.esDestinoAdecuado(lugar) } }
+        val precioAdecuado: List<Tour> = toursDestinosAdecuados.filter { persona.esPrecioAdecuado(it) }
+
+        try {
+            val tourMasBarato: Tour = precioAdecuado.minByOrNull { it.costoPorPersona } ?: throw BusinessException("No se encontró un tour adecuado para $persona.")
+            tourMasBarato.agregarPersona(persona)
+        } catch(e: BusinessException) {
+            clientesPendientes.add(persona)
+        }
+    }
+
+    fun confirmarTour(tour: Tour) {
+
+        if(!tour.estaLleno()) throw BusinessException("$tour tiene más capacidad.")
+        tour.confirmarTour()
+        obsConfirmacion.forEach { it.tourConfirmado() }
+    }
+
+    fun agregarClienteAlTour(tour: Tour, persona: Persona) {
+        tour.agregarPersona(persona)
+    }
+
+    fun eliminarClienteDelTour(tour: Tour, persona: Persona) {
+        tour.eliminarPersona(persona)
+    }
+
+    fun modificarPresupuestoCliente(persona: Persona, nuevoPresupuesto: Int) {
+        persona.modificarPresupuesto(nuevoPresupuesto)
+    }
 }
 
-class Tours(
-    val fecha: LocalDate,
-    val cantidadPersonas: Int,
+class Tour(
+    val fechaSalida: LocalDate,
+    val cantidadPersonasRequerida: Int,
     val lugares: MutableList<Lugar>,
     val costoPorPersona: Int
 ) {
 
+    private var confirmado = false
+    private val anotados = mutableListOf<Persona>()
+
+    fun confirmarTour() {
+        confirmado = true
+    }
+
+    fun estaLleno(): Boolean = anotados.size >= cantidadPersonasRequerida
+
+    fun agregarPersona(persona: Persona) {
+        if(confirmado) throw BusinessException("$this ya está confirmado.")
+        anotados.add(persona)
+    }
+
+    fun eliminarPersona(persona: Persona) {
+        anotados.remove(persona)
+    }
 }
 
 // #### PUNTO 1 ####
@@ -95,10 +157,25 @@ class Balnearios(
 }
 
 // #### PUNTO 2 ####
-class Personas(private var preferencia: Preferencia = SinPreferencia()) {
+class Persona(
+    private var preferencia: Preferencia,
+    private var presupuesto: Int
+) {
 
     fun cambiarPreferencia(nuevaPreferencia: Preferencia) {
         preferencia = nuevaPreferencia
+    }
+
+    fun definirPresupuesto(monto: Int) {
+        presupuesto = monto
+    }
+
+    fun esPrecioAdecuado(tour: Tour): Boolean = tour.costoPorPersona <= presupuesto
+
+    fun esDestinoAdecuado(lugar: Lugar): Boolean = preferencia.esDestinoAdecuado(lugar)
+
+    fun modificarPresupuesto(nuevoPresupuesto: Int) {
+        presupuesto = nuevoPresupuesto
     }
 }
 
