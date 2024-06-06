@@ -153,7 +153,7 @@ class AlternarPreferencia : ObsConfirmacion {
 class Tours(
     val fecha: LocalDate,
     val cantidadPersonas: Int,
-    val lugares: MutableList<Lugares>,
+    val lugares: MutableList<Lugar>,
     val costoPorPersona: Int
 ) {
 
