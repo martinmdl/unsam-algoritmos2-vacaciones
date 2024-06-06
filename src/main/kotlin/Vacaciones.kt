@@ -254,4 +254,7 @@ class AlternarPreferencia : ObsConfirmacion {
     }
 }
 
-// prueba PRUEBA 2
+// prueba PRUEBA 2 test tes
+class Prueba {
+
+}
