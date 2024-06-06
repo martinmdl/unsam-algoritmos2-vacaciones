@@ -12,5 +12,7 @@
 #### Punto 1.3
 - Aún que ***marPeligroso*** podría usarse directamente en el condicional, preferí mantener ese valor privado y hacerle un getter. Lo mismo pasa para ***peatonal***.
 
-#### Punto X
-- Null-Pattern ? A CONFIRMAR
+#### Punto 2
+- A pesar de que la preferencia no se inicialice en su definición, creé una preferencia ***SinPreferencia()*** que devuelve siempre ***true*** a modo de preferencia default o de ***Null-Object***.
+
+- 
