@@ -7,6 +7,15 @@ class Agencia {
     val obsConfirmacion = mutableSetOf<ObsConfirmacion>()
 }
 
+class Tours(
+    val fecha: LocalDate,
+    val cantidadPersonas: Int,
+    val lugares: MutableList<Lugar>,
+    val costoPorPersona: Int
+) {
+
+}
+
 // #### PUNTO 1 ####
 abstract class Lugar {
 
@@ -50,39 +59,57 @@ class Ciudades(
 class Pueblos(
     override val nombre: String,
     private val provincia: String,
-    private val region: String,
     private val fundacion: LocalDate
 ) : Lugar() {
+
+    companion object { private val FECHA_MAX = LocalDate.of(1800, 1, 1) }
 
     override fun esTranquilo(): Boolean = provincia == "La Pampa"
 
     override fun esParticularmenteDivertido(): Boolean = esAntiguo() && esDelLitoral()
 
-    private fun esDelLitoral(): Boolean = region == "Litoral"
+    private fun esDelLitoral(): Boolean = mutableSetOf("Entre Ríos", "Corrientes", "Misiones").contains(provincia)
 
-    private fun esAntiguo(): Boolean = fundacion < LocalDate.of(1800, 1, 1)
+    private fun esAntiguo(): Boolean = fundacion < FECHA_MAX
 }
 
 // #### PUNTO 1.3 ####
-class Balnearios(override val nombre: String) : Lugar() {
+class Balnearios(
+    override val nombre: String,
+    private val extension: Int,
+    private val marPeligroso: Boolean,
+    private val peatonal: Boolean
+) : Lugar() {
 
-    override fun esTranquilo(): Boolean {
-        TODO("Not yet implemented")
-    }
+    companion object { private const val EXTENSION_MIN = 300 }
 
-    override fun esParticularmenteDivertido(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun esTranquilo(): Boolean = !tienePeatonal()
+
+    private fun tienePeatonal(): Boolean = peatonal
+
+    override fun esParticularmenteDivertido(): Boolean = esExtenso() && tieneMarPeligroso()
+
+    private fun tieneMarPeligroso(): Boolean = marPeligroso
+
+    private fun esExtenso() = extension > EXTENSION_MIN
 }
 
 // #### PUNTO 2 ####
-class Personas(val preferencia: Preferencia) {
+class Personas(private var preferencia: Preferencia = SinPreferencia()) {
 
+    fun cambiarPreferencia(nuevaPreferencia: Preferencia) {
+        preferencia = nuevaPreferencia
+    }
 }
 
 // #### PUNTO 2 ####
 interface Preferencia {
     fun esDestinoAdecuado(lugar: Lugar): Boolean
+}
+
+// Null-Object Pattern
+class SinPreferencia : Preferencia {
+    override fun esDestinoAdecuado(lugar: Lugar): Boolean = true
 }
 
 // #### PUNTO 2.1 ####
@@ -148,13 +175,4 @@ class AlternarPreferencia : ObsConfirmacion {
     override fun tourConfirmado() {
         TODO("Not yet implemented")
     }
-}
-
-class Tours(
-    val fecha: LocalDate,
-    val cantidadPersonas: Int,
-    val lugares: MutableList<Lugar>,
-    val costoPorPersona: Int
-) {
-
 }
