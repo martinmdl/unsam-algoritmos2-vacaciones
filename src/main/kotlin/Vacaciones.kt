@@ -254,4 +254,4 @@ class AlternarPreferencia : ObsConfirmacion {
     }
 }
 
-// prueba
+// prueba PRUEBA 2
