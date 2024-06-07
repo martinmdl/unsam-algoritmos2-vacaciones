@@ -59,6 +59,8 @@ class Tour(
     val costoPorPersona: Int
 ) {
 
+    companion object { private const val COSTO_EXCESIVO = 10000000 }
+
     private var confirmado = false
     val anotados = mutableListOf<Persona>()
 
@@ -76,11 +78,14 @@ class Tour(
     fun eliminarPersona(persona: Persona) {
         anotados.remove(persona)
     }
+
+    fun esCaro(): Boolean = costoPorPersona > COSTO_EXCESIVO
 }
 
 // #### PUNTO 1 ####
 abstract class Lugar {
 
+    abstract val codigo: String
     abstract val nombre: String
 
     // Template Method
@@ -96,6 +101,7 @@ abstract class Lugar {
 
 // #### PUNTO 1.1 ####
 class Ciudad(
+    override val codigo: String,
     override val nombre: String,
     private val cantAtracciones: Int,
     private val habitantes: Int,
@@ -119,6 +125,7 @@ class Ciudad(
 
 // #### PUNTO 1.2 ####
 class Pueblo(
+    override val codigo: String,
     override val nombre: String,
     private val provincia: String,
     private val fundacion: LocalDate
@@ -137,6 +144,7 @@ class Pueblo(
 
 // #### PUNTO 1.3 ####
 class Balneario(
+    override val codigo: String,
     override val nombre: String,
     private val extension: Int,
     private val marPeligroso: Boolean,
@@ -160,7 +168,8 @@ class Balneario(
 class Persona(
     var preferencia: Preferencia,
     private var presupuesto: Int,
-    val email: String
+    val email: String,
+    val dni: String
 ) {
 
     fun cambiarPreferencia(nuevaPreferencia: Preferencia) {
@@ -251,10 +260,19 @@ interface InfoAfip { fun informar(informe: Informe) }
 
 data class Informe(val codigos: String, val dnis: String)
 
-class InformarAfip : ObsConfirmacion {
+class InformarAfip(val infoAfip: InfoAfip) : ObsConfirmacion {
 
     override fun tourConfirmado(tour: Tour) {
-        TODO("Not yet implemented")
+        if(tour.esCaro()) {
+
+            val codigos = tour.lugares.joinToString(", ") { it.codigo }
+            val dnis = tour.anotados.joinToString(", ") { it.dni }
+
+            infoAfip.informar(Informe(
+                codigos = codigos,
+                dnis = dnis
+            ))
+        }
     }
 }
 
