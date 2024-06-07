@@ -17,5 +17,3 @@
 
 #### Punto 2
 - A pesar de que la preferencia no se inicialice en su definición, creé una preferencia ***SinPreferencia()*** que devuelve siempre ***true*** a modo de preferencia default o de ***Null-Object***.
-
-- 
