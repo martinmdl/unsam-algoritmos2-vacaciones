@@ -266,3 +266,5 @@ class AlternarPreferencia : ObsConfirmacion {
         // anotadosPrefeAlternada.forEach { it.preferencia.alternarPreferencia() }
     }
 }
+
+// prueba
