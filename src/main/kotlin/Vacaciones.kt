@@ -36,7 +36,7 @@ class Agencia {
 
         if(!tour.estaLleno()) throw BusinessException("$tour tiene más capacidad.")
         tour.confirmarTour()
-        obsConfirmacion.forEach { it.tourConfirmado() }
+        obsConfirmacion.forEach { it.tourConfirmado(tour) }
     }
 
     fun agregarClienteAlTour(tour: Tour, persona: Persona) {
@@ -60,7 +60,7 @@ class Tour(
 ) {
 
     private var confirmado = false
-    private val anotados = mutableListOf<Persona>()
+    val anotados = mutableListOf<Persona>()
 
     fun confirmarTour() {
         confirmado = true
@@ -158,8 +158,9 @@ class Balnearios(
 
 // #### PUNTO 2 ####
 class Persona(
-    private var preferencia: Preferencia,
-    private var presupuesto: Int
+    var preferencia: Preferencia,
+    private var presupuesto: Int,
+    val email: String
 ) {
 
     fun cambiarPreferencia(nuevaPreferencia: Preferencia) {
@@ -219,7 +220,7 @@ class CombinadaOr(private val preferencias: MutableSet<Preferencia>) : Preferenc
 
 // #### PUNTO 4 ####
 interface ObsConfirmacion {
-    fun tourConfirmado()
+    fun tourConfirmado(tour: Tour)
 }
 
 // #### PUNTO 4.1 ####
@@ -227,11 +228,22 @@ interface MailSender { fun sendMail(mail: Mail) }
 
 data class Mail(val from: String, val to: String, val subject: String, val message: String)
 
-class NotificarParticipantes : ObsConfirmacion {
+class NotificarParticipantes(private val mailSender: MailSender) : ObsConfirmacion {
 
-    override fun tourConfirmado() {
-        TODO("Not yet implemented")
+    override fun tourConfirmado(tour: Tour) {
+
+        val emails = tour.anotados.joinToString(", ") { it.email }
+        val lugares = tour.lugares.joinToString(", ") { it.nombre }
+        val fechaLimitePago = tour.fechaSalida.minusDays(30)
+
+        mailSender.sendMail(Mail(
+            from = "agenciaViajes@gmail.com",
+            to = emails,
+            subject = "Info: $tour",
+            message = "Fecha de salida: ${tour.fechaSalida}, Fecha límite de pago: $fechaLimitePago, Destinos: $lugares"
+        ))
     }
+
 }
 
 // #### PUNTO 4.2 ####
@@ -241,7 +253,7 @@ data class Informe(val codigos: String, val dnis: String)
 
 class InformarAfip : ObsConfirmacion {
 
-    override fun tourConfirmado() {
+    override fun tourConfirmado(tour: Tour) {
         TODO("Not yet implemented")
     }
 }
@@ -249,12 +261,8 @@ class InformarAfip : ObsConfirmacion {
 // #### PUNTO 4.3 ####
 class AlternarPreferencia : ObsConfirmacion {
 
-    override fun tourConfirmado() {
-        TODO("Not yet implemented")
+    override fun tourConfirmado(tour: Tour) {
+        val anotadosPrefeAlternada = tour.anotados.filter { it.preferencia is Alternada }
+        // anotadosPrefeAlternada.forEach { it.preferencia.alternarPreferencia() }
     }
-}
-
-// prueba PRUEBA 2 test tes
-class Prueba {
-
 }
