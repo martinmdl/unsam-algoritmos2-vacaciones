@@ -52,6 +52,7 @@ class Agencia {
     }
 }
 
+// #### PUNTO 3 ####
 class Tour(
     val fechaSalida: LocalDate,
     val cantidadPersonasRequerida: Int,
@@ -192,7 +193,7 @@ class Persona(
 // #### PUNTO 2 ####
 interface Preferencia {
     fun esDestinoAdecuado(lugar: Lugar): Boolean
-    fun alternarPreferencia() {}
+    fun alternarPreferencia() {} // DEUDA TECNICA
 }
 
 // Null-Object Pattern
