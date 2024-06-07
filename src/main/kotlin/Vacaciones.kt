@@ -192,21 +192,25 @@ class Persona(
 // #### PUNTO 2 ####
 interface Preferencia {
     fun esDestinoAdecuado(lugar: Lugar): Boolean
+    fun alternarPreferencia()
 }
 
 // Null-Object Pattern
 class SinPreferencia : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean = true
+    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 2.1 ####
 class Tranquila : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean = lugar.esTranquilo()
+    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 2.2 ####
 class Divertida : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean = lugar.esDivertido()
+    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 2.3 ####
@@ -215,7 +219,7 @@ class Alternada(private var preferenciaActual: Preferencia) : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean =
         preferenciaActual.esDestinoAdecuado(lugar)
 
-    fun alternarPreferencia() {
+    override fun alternarPreferencia() {
         if (preferenciaActual is Tranquila) Divertida() else Tranquila()
     }
 }
@@ -225,6 +229,8 @@ class CombinadaOr(private val preferencias: MutableSet<Preferencia>) : Preferenc
 
     override fun esDestinoAdecuado(lugar: Lugar): Boolean =
         preferencias.any { it.esDestinoAdecuado(lugar) }
+
+    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 4 ####
@@ -281,7 +287,7 @@ class AlternarPreferencia : ObsConfirmacion {
 
     override fun tourConfirmado(tour: Tour) {
         val anotadosPrefeAlternada = tour.anotados.filter { it.preferencia is Alternada }
-        // anotadosPrefeAlternada.forEach { it.preferencia.alternarPreferencia() }
+        anotadosPrefeAlternada.forEach { it.preferencia.alternarPreferencia() }
     }
 }
 
