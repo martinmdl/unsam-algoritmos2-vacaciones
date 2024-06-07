@@ -95,7 +95,7 @@ abstract class Lugar {
 }
 
 // #### PUNTO 1.1 ####
-class Ciudades(
+class Ciudad(
     override val nombre: String,
     private val cantAtracciones: Int,
     private val habitantes: Int,
@@ -118,7 +118,7 @@ class Ciudades(
 }
 
 // #### PUNTO 1.2 ####
-class Pueblos(
+class Pueblo(
     override val nombre: String,
     private val provincia: String,
     private val fundacion: LocalDate
@@ -136,7 +136,7 @@ class Pueblos(
 }
 
 // #### PUNTO 1.3 ####
-class Balnearios(
+class Balneario(
     override val nombre: String,
     private val extension: Int,
     private val marPeligroso: Boolean,
