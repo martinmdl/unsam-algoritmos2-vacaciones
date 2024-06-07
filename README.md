@@ -4,6 +4,9 @@
 
 ## Diagrama de clases
 
+![parcial drawio](https://github.com/algo2-unsam/parcial-vacaciones-2024-martinmdl/assets/78437578/7f0a43e3-bf5c-40c2-8c13-3c971b74d9b6)
+
+
 ## Desiciones de diseño
 
 #### Punto 1
