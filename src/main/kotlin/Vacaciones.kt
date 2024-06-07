@@ -192,25 +192,22 @@ class Persona(
 // #### PUNTO 2 ####
 interface Preferencia {
     fun esDestinoAdecuado(lugar: Lugar): Boolean
-    fun alternarPreferencia()
+    fun alternarPreferencia() {}
 }
 
 // Null-Object Pattern
 class SinPreferencia : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean = true
-    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 2.1 ####
 class Tranquila : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean = lugar.esTranquilo()
-    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 2.2 ####
 class Divertida : Preferencia {
     override fun esDestinoAdecuado(lugar: Lugar): Boolean = lugar.esDivertido()
-    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 2.3 ####
@@ -229,8 +226,6 @@ class CombinadaOr(private val preferencias: MutableSet<Preferencia>) : Preferenc
 
     override fun esDestinoAdecuado(lugar: Lugar): Boolean =
         preferencias.any { it.esDestinoAdecuado(lugar) }
-
-    override fun alternarPreferencia() {}
 }
 
 // #### PUNTO 4 ####
@@ -290,5 +285,3 @@ class AlternarPreferencia : ObsConfirmacion {
         anotadosPrefeAlternada.forEach { it.preferencia.alternarPreferencia() }
     }
 }
-
-// prueba
